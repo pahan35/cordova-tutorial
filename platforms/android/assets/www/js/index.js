@@ -40,9 +40,11 @@ var app = {
         var parentElement = document.getElementById(id);
         var listeningElement = parentElement.querySelector('.listening');
         var receivedElement = parentElement.querySelector('.received');
+        var received2Element = parentElement.querySelector('.received2');
 
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:block;');
+        received2Element.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
     }
