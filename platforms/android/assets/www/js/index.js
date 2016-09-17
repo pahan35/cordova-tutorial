@@ -91,3 +91,9 @@ function onBackKeyDown(e) {
     e.preventDefault();
     alert('Back Button is Pressed!');
 }
+
+window.addEventListener("batterystatus", onBatteryStatus, false);
+
+function onBatteryStatus(info) {
+    alert("BATTERY STATUS:  Level: " + info.level + " isPlugged: " + info.isPlugged);
+}
