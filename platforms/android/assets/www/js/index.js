@@ -34,6 +34,7 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+        window.addEventListener("batterystatus", onBatteryStatus, false);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -91,8 +92,6 @@ function onBackKeyDown(e) {
     e.preventDefault();
     alert('Back Button is Pressed!');
 }
-
-window.addEventListener("batterystatus", onBatteryStatus, false);
 
 function onBatteryStatus(info) {
     alert("BATTERY STATUS:  Level: " + info.level + " isPlugged: " + info.isPlugged);
