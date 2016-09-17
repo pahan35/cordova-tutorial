@@ -41,14 +41,14 @@ var app = {
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
+        /*var parentElement = document.getElementById(id);
         var listeningElement = parentElement.querySelector('.listening');
         var receivedElement = parentElement.querySelector('.received');
 
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:block;');
 
-        console.log('Received Event: ' + id);
+        console.log('Received Event: ' + id);*/
     }
 };
 
@@ -70,7 +70,6 @@ function onBackKeyDown(e) {
 }
 
 function createContact() {
-    alert('createContact');
     var myContact = navigator.contacts.create({"displayName": "Test User"});
     myContact.save(contactSuccess, contactError);
 
@@ -85,7 +84,6 @@ function createContact() {
 }
 
 function findContacts() {
-    alert('findContacts');
     var options = new ContactFindOptions();
     options.filter = "";
     options.multiple = true;
@@ -106,7 +104,6 @@ function findContacts() {
 }
 
 function deleteContact() {
-    alert('deleteContact');
     var options = new ContactFindOptions();
     options.filter = "Test User";
     options.multiple = false;
