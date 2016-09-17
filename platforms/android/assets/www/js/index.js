@@ -35,9 +35,9 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("cameraTakePicture").addEventListener
-        ("click", cameraTakePicture);
-        document.getElementById("cameraGetPicture").addEventListener("click", cameraGetPicture);
+        document.getElementById("createContact").addEventListener("click", createContact);
+        document.getElementById("findContact").addEventListener("click", findContacts);
+        document.getElementById("deleteContact").addEventListener("click", deleteContact);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -69,40 +69,71 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
+function createContact() {
+    alert('createContact');
+    var myContact = navigator.contacts.create({"displayName": "Test User"});
+    myContact.save(contactSuccess, contactError);
+
+    function contactSuccess() {
+        alert("Contact is saved!")
+    }
+
+    function contactError(message) {
+        alert('Failed because: ' + message);
+    }
+
+}
+
+function findContacts() {
+    alert('findContacts');
+    var options = new ContactFindOptions();
+    options.filter = "";
+    options.multiple = true;
+
+    fields = ["displayName"];
+    navigator.contacts.find(fields, contactfindSuccess, contactfindError, options);
+
+    function contactfindSuccess(contacts) {
+        for (var i = 0; i < contacts.length; i++) {
+            alert("Display Name = " + contacts[i].displayName);
+        }
+    }
+
+    function contactfindError(message) {
+        alert('Failed because: ' + message);
+    }
+
+}
+
+function deleteContact() {
+    alert('deleteContact');
+    var options = new ContactFindOptions();
+    options.filter = "Test User";
+    options.multiple = false;
+    fields = ["displayName"];
+
+    navigator.contacts.find(fields, contactfindSuccess, contactfindError, options);
+
+    function contactfindSuccess(contacts) {
+
+        var contact = contacts[0];
+        contact.remove(contactRemoveSuccess, contactRemoveError);
+
+        function contactRemoveSuccess(contact) {
+            alert("Contact Deleted");
+        }
+
+        function contactRemoveError(message) {
+            alert('Failed because: ' + message);
+        }
+    }
+
+    function contactfindError(message) {
+        alert('Failed because: ' + message);
+    }
+
+}
+
 function onBatteryStatus(info) {
     alert("BATTERY STATUS:  Level: " + info.level + " isPlugged: " + info.isPlugged);
-}
-
-function cameraTakePicture() {
-    navigator.camera.getPicture(onSuccess, onFail, {
-        quality: 50,
-        destinationType: Camera.DestinationType.DATA_URL
-    });
-
-    function onSuccess(imageData) {
-        var image = document.getElementById('myImage');
-        image.src = "data:image/jpeg;base64," + imageData;
-    }
-
-    function onFail(message) {
-        alert('Failed because: ' + message);
-    }
-}
-
-function cameraGetPicture() {
-    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
-        destinationType: Camera.DestinationType.DATA_URL,
-        sourceType: Camera.PictureSourceType.PHOTOLIBRARY
-    });
-
-    function onSuccess(imageURL) {
-        var image = document.getElementById('myImage');
-        alert(imageURL);
-        image.src = imageURL;
-    }
-
-    function onFail(message) {
-        alert('Failed because: ' + message);
-    }
-
 }
