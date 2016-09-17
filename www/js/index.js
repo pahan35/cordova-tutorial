@@ -34,6 +34,7 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+        document.getElementById("findContacts").addEventListener("click", findContacts);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -49,3 +50,24 @@ var app = {
 };
 
 app.initialize();
+
+function findContacts() {
+    var options = new ContactFindOptions();
+    options.filter = "";
+    options.multiple = true;
+
+    fields = ["displayName"];
+    navigator.contacts.find(fields, contactfindSuccess, contactfindError, options);
+
+    function contactfindSuccess(contacts) {
+        for (var i = 0; i < contacts.length; i++) {
+            alert("Display Name = " + contacts[i].displayName);
+            // TODO: Write contacts into local storage
+        }
+    }
+
+    function contactfindError(message) {
+        alert('Failed because: ' + message);
+    }
+
+}
