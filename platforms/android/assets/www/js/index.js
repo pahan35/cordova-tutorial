@@ -35,6 +35,9 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
+        document.getElementById("cameraTakePicture").addEventListener
+        ("click", cameraTakePicture);
+        document.getElementById("cameraGetPicture").addEventListener("click", cameraGetPicture);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -51,34 +54,7 @@ var app = {
 
 app.initialize();
 
-document.getElementById("setLocalStorage").addEventListener("click", setLocalStorage);
-document.getElementById("showLocalStorage").addEventListener("click", showLocalStorage);
-document.getElementById("removeProjectFromLocalStorage").addEventListener
-("click", removeProjectFromLocalStorage);
-document.getElementById("getLocalStorageByKey").addEventListener
-("click", getLocalStorageByKey);
-
 var localStorage = window.localStorage;
-
-function setLocalStorage() {
-    localStorage.setItem("Name", "John");
-    localStorage.setItem("Job", "Developer");
-    localStorage.setItem("Project", "Cordova Project");
-}
-
-function showLocalStorage() {
-    console.log(localStorage.getItem("Name"));
-    console.log(localStorage.getItem("Job"));
-    console.log(localStorage.getItem("Project"));
-}
-
-function removeProjectFromLocalStorage() {
-    localStorage.removeItem("Project");
-}
-
-function getLocalStorageByKey() {
-    console.log(localStorage.key(0));
-}
 
 document.addEventListener("volumeupbutton", callbackFunction, false);
 
@@ -95,4 +71,38 @@ function onBackKeyDown(e) {
 
 function onBatteryStatus(info) {
     alert("BATTERY STATUS:  Level: " + info.level + " isPlugged: " + info.isPlugged);
+}
+
+function cameraTakePicture() {
+    navigator.camera.getPicture(onSuccess, onFail, {
+        quality: 50,
+        destinationType: Camera.DestinationType.DATA_URL
+    });
+
+    function onSuccess(imageData) {
+        var image = document.getElementById('myImage');
+        image.src = "data:image/jpeg;base64," + imageData;
+    }
+
+    function onFail(message) {
+        alert('Failed because: ' + message);
+    }
+}
+
+function cameraGetPicture() {
+    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+        destinationType: Camera.DestinationType.DATA_URL,
+        sourceType: Camera.PictureSourceType.PHOTOLIBRARY
+    });
+
+    function onSuccess(imageURL) {
+        var image = document.getElementById('myImage');
+        alert(imageURL);
+        image.src = imageURL;
+    }
+
+    function onFail(message) {
+        alert('Failed because: ' + message);
+    }
+
 }
