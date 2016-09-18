@@ -35,9 +35,7 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("createContact").addEventListener("click", createContact);
-        document.getElementById("findContact").addEventListener("click", findContacts);
-        document.getElementById("deleteContact").addEventListener("click", deleteContact);
+        document.getElementById("cordovaDevice").addEventListener("click", cordovaDevice)
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -69,66 +67,12 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function createContact() {
-    var myContact = navigator.contacts.create({"displayName": "Test User"});
-    myContact.save(contactSuccess, contactError);
-
-    function contactSuccess() {
-        alert("Contact is saved!")
-    }
-
-    function contactError(message) {
-        alert('Failed because: ' + message);
-    }
-
-}
-
-function findContacts() {
-    var options = new ContactFindOptions();
-    options.filter = "";
-    options.multiple = true;
-
-    fields = ["displayName"];
-    navigator.contacts.find(fields, contactfindSuccess, contactfindError, options);
-
-    function contactfindSuccess(contacts) {
-        for (var i = 0; i < contacts.length; i++) {
-            alert("Display Name = " + contacts[i].displayName);
-        }
-    }
-
-    function contactfindError(message) {
-        alert('Failed because: ' + message);
-    }
-
-}
-
-function deleteContact() {
-    var options = new ContactFindOptions();
-    options.filter = "Test User";
-    options.multiple = false;
-    fields = ["displayName"];
-
-    navigator.contacts.find(fields, contactfindSuccess, contactfindError, options);
-
-    function contactfindSuccess(contacts) {
-
-        var contact = contacts[0];
-        contact.remove(contactRemoveSuccess, contactRemoveError);
-
-        function contactRemoveSuccess(contact) {
-            alert("Contact Deleted");
-        }
-
-        function contactRemoveError(message) {
-            alert('Failed because: ' + message);
-        }
-    }
-
-    function contactfindError(message) {
-        alert('Failed because: ' + message);
-    }
-
+function cordovaDevice() {
+    alert("Cordova version: " + device.cordova + "\n" +
+        "Device model: " + device.model + "\n" +
+        "Device platform: " + device.platform + "\n" +
+        "Device UUID: " + device.uuid + "\n" +
+        "Device version: " + device.version);
 }
 
 function onBatteryStatus(info) {

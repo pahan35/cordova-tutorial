@@ -116,6 +116,14 @@ module.exports = [
         "merges": [
             ""
         ]
+    },
+    {
+        "id": "cordova-plugin-device.device",
+        "file": "plugins/cordova-plugin-device/www/device.js",
+        "pluginId": "cordova-plugin-device",
+        "clobbers": [
+            "device"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -125,7 +133,8 @@ module.exports.metadata =
     "cordova-plugin-battery-status": "1.2.0",
     "cordova-plugin-compat": "1.0.0",
     "cordova-plugin-camera": "2.3.0",
-    "cordova-plugin-contacts": "2.2.0"
+    "cordova-plugin-contacts": "2.2.0",
+    "cordova-plugin-device": "1.1.3"
 };
 // BOTTOM OF METADATA
 });
