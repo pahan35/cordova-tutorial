@@ -35,8 +35,10 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("getOrientation").addEventListener("click", getOrientation);
-        document.getElementById("watchOrientation").addEventListener("click", watchOrientation);
+        document.getElementById("dialogAlert").addEventListener("click", dialogAlert);
+        document.getElementById("dialogConfirm").addEventListener("click", dialogConfirm);
+        document.getElementById("dialogPrompt").addEventListener("click", dialogPrompt);
+        document.getElementById("dialogBeep").addEventListener("click", dialogBeep);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -68,40 +70,50 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function getOrientation(){
-    navigator.compass.getCurrentHeading(compassSuccess, compassError);
+function dialogAlert() {
+    var message = "I am Alert Dialog!";
+    var title = "ALERT";
+    var buttonName = "Alert Button";
 
-    function compassSuccess(heading) {
-        alert('Heading: ' + heading.magneticHeading);
-    };
+    navigator.notification.alert(message, alertCallback, title, buttonName);
 
-    function compassError(error) {
-        alert('CompassError: ' + error.code);
-    };
+    function alertCallback() {
+        console.log("Alert is Dismissed!");
+    }
 
 }
 
-function watchOrientation(){
+function dialogConfirm() {
+    var message = "Am I Confirm Dialog?";
+    var title = "CONFIRM";
+    var buttonLabels = "YES,NO";
 
-    var compassOptions = {
-        frequency: 3000
+    navigator.notification.confirm(message, confirmCallback, title, buttonLabels);
+
+    function confirmCallback(buttonIndex) {
+        console.log("You clicked " + buttonIndex + " button!");
     }
 
-    var watchID = navigator.compass.watchHeading(compassSuccess, compassError, compassOptions);
+}
 
-    function compassSuccess(heading) {
-        alert('Heading: ' + heading.magneticHeading);
+function dialogPrompt() {
+    var message = "Am I Prompt Dialog?";
+    var title = "PROMPT";
+    var buttonLabels = ["YES","NO"];
+    var defaultText = "Default"
 
-        setTimeout(function() {
-            navigator.compass.clearWatch(watchID);
-        }, 10000);
+    navigator.notification.prompt(message, promptCallback, title, buttonLabels, defaultText);
 
-    };
+    function promptCallback(result) {
+        console.log("You clicked " + result.buttonIndex + " button! \n" +
+            "You entered " +  result.input1);
+    }
 
-    function compassError(error) {
-        alert('CompassError: ' + error.code);
-    };
+}
 
+function dialogBeep() {
+    var times = 2;
+    navigator.notification.beep(times);
 }
 
 function onBatteryStatus(info) {
