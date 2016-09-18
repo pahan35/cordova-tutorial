@@ -35,7 +35,8 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("cordovaDevice").addEventListener("click", cordovaDevice)
+        document.getElementById("getAcceleration").addEventListener("click", getAcceleration);
+        document.getElementById("watchAcceleration").addEventListener("click", watchAcceleration);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -67,12 +68,46 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function cordovaDevice() {
-    alert("Cordova version: " + device.cordova + "\n" +
-        "Device model: " + device.model + "\n" +
-        "Device platform: " + device.platform + "\n" +
-        "Device UUID: " + device.uuid + "\n" +
-        "Device version: " + device.version);
+function getAcceleration(){
+    navigator.accelerometer.getCurrentAcceleration(accelerometerSuccess, accelerometerError);
+
+    function accelerometerSuccess(acceleration) {
+        alert('Acceleration X: ' + acceleration.x + '\n' +
+            'Acceleration Y: ' + acceleration.y + '\n' +
+            'Acceleration Z: ' + acceleration.z + '\n' +
+            'Timestamp: '      + acceleration.timestamp + '\n');
+    };
+
+    function accelerometerError() {
+        alert('onError!');
+    };
+
+}
+
+function watchAcceleration(){
+
+    var accelerometerOptions = {
+        frequency: 3000
+    }
+
+    var watchID = navigator.accelerometer.watchAcceleration(accelerometerSuccess, accelerometerError, accelerometerOptions);
+
+    function accelerometerSuccess(acceleration) {
+        alert('Acceleration X: ' + acceleration.x + '\n' +
+            'Acceleration Y: ' + acceleration.y + '\n' +
+            'Acceleration Z: ' + acceleration.z + '\n' +
+            'Timestamp: '      + acceleration.timestamp + '\n');
+
+        setTimeout(function() {
+            navigator.accelerometer.clearWatch(watchID);
+        }, 10000);
+
+    };
+
+    function accelerometerError() {
+        alert('onError!');
+    };
+
 }
 
 function onBatteryStatus(info) {
