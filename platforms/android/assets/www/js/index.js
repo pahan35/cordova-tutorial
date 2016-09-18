@@ -35,10 +35,8 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("createFile").addEventListener("click", createFile);
-        document.getElementById("writeFile").addEventListener("click", writeFile);
-        document.getElementById("readFile").addEventListener("click", readFile);
-        document.getElementById("removeFile").addEventListener("click", removeFile);
+        document.getElementById("uploadFile").addEventListener("click", uploadFile);
+        document.getElementById("downloadFile").addEventListener("click", downloadFile);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -70,106 +68,58 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function createFile() {
-    var type = window.TEMPORARY;
-    var size = 5*1024*1024;
+function downloadFile() {
 
-    window.requestFileSystem(type, size, successCallback, errorCallback)
+    var fileTransfer = new FileTransfer();
+    var uri = encodeURI("https://s14.postimg.io/i8qvaxyup/bitcoin1.jpg");
+    //var fileURL =  "///storage/emulated/0/DCIM/myFile";
+    var fileURL =  "///storage/emulated/0/DCIM/bitcoin1.jpg";
 
-    function successCallback(fs) {
-        fs.root.getFile('log.txt', {create: true, exclusive: true}, function(fileEntry) {
-            alert('File creation successfull!')
-        }, errorCallback);
-    }
+    fileTransfer.download(
+        uri, fileURL, function(entry) {
+            console.log("download complete: " + entry.toURL());
+        },
 
-    function errorCallback(error) {
-        alert("ERROR: " + error.code)
-    }
+        function(error) {
+            console.log("download error source " + error.source);
+            console.log("download error target " + error.target);
+            console.log("download error code" + error.code);
+        },
 
+        false, {
+            headers: {
+                "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+            }
+        }
+    );
 }
 
-function writeFile() {
-    var type = window.TEMPORARY;
-    var size = 5*1024*1024;
+function uploadFile() {
+    var fileURL = "///storage/emulated/0/DCIM/bitcoin1.jpg"
+    var uri = encodeURI("http://posttestserver.com/post.php");
+    var options = new FileUploadOptions();
 
-    window.requestFileSystem(type, size, successCallback, errorCallback)
+    options.fileKey = "file";
+    options.fileName = fileURL.substr(fileURL.lastIndexOf('/')+1);
+    options.mimeType = "text/plain";
 
-    function successCallback(fs) {
+    var headers = {'headerParam':'headerValue'};
+    options.headers = headers;
 
-        fs.root.getFile('log.txt', {create: true}, function(fileEntry) {
+    var ft = new FileTransfer();
 
-            fileEntry.createWriter(function(fileWriter) {
-                fileWriter.onwriteend = function(e) {
-                    alert('Write completed.');
-                };
+    ft.upload(fileURL, uri, onSuccess, onError, options);
 
-                fileWriter.onerror = function(e) {
-                    alert('Write failed: ' + e.toString());
-                };
-
-                var blob = new Blob(['Lorem Ipsum'], {type: 'text/plain'});
-                fileWriter.write(blob);
-            }, errorCallback);
-
-        }, errorCallback);
-
+    function onSuccess(r) {
+        console.log("Code = " + r.responseCode);
+        console.log("Response = " + r.response);
+        console.log("Sent = " + r.bytesSent);
     }
 
-    function errorCallback(error) {
-        alert("ERROR: " + error.code)
-    }
-
-}
-
-function readFile() {
-    var type = window.TEMPORARY;
-    var size = 5*1024*1024;
-
-    window.requestFileSystem(type, size, successCallback, errorCallback)
-
-    function successCallback(fs) {
-
-        fs.root.getFile('log.txt', {}, function(fileEntry) {
-
-            fileEntry.file(function(file) {
-                var reader = new FileReader();
-
-                reader.onloadend = function(e) {
-                    var txtArea = document.getElementById('textarea');
-                    txtArea.value = this.result;
-                };
-
-                reader.readAsText(file);
-
-            }, errorCallback);
-
-        }, errorCallback);
-    }
-
-    function errorCallback(error) {
-        alert("ERROR: " + error.code)
-    }
-
-}
-
-function removeFile() {
-    var type = window.TEMPORARY;
-    var size = 5*1024*1024;
-
-    window.requestFileSystem(type, size, successCallback, errorCallback)
-
-    function successCallback(fs) {
-        fs.root.getFile('log.txt', {create: false}, function(fileEntry) {
-
-            fileEntry.remove(function() {
-                alert('File removed.');
-            }, errorCallback);
-
-        }, errorCallback);
-    }
-
-    function errorCallback(error) {
-        alert("ERROR: " + error.code)
+    function onError(error) {
+        alert("An error has occurred: Code = " + error.code);
+        console.log("upload error source " + error.source);
+        console.log("upload error target " + error.target);
     }
 
 }
