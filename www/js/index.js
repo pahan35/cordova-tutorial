@@ -35,8 +35,8 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("getAcceleration").addEventListener("click", getAcceleration);
-        document.getElementById("watchAcceleration").addEventListener("click", watchAcceleration);
+        document.getElementById("getOrientation").addEventListener("click", getOrientation);
+        document.getElementById("watchOrientation").addEventListener("click", watchOrientation);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -68,44 +68,38 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function getAcceleration(){
-    navigator.accelerometer.getCurrentAcceleration(accelerometerSuccess, accelerometerError);
+function getOrientation(){
+    navigator.compass.getCurrentHeading(compassSuccess, compassError);
 
-    function accelerometerSuccess(acceleration) {
-        alert('Acceleration X: ' + acceleration.x + '\n' +
-            'Acceleration Y: ' + acceleration.y + '\n' +
-            'Acceleration Z: ' + acceleration.z + '\n' +
-            'Timestamp: '      + acceleration.timestamp + '\n');
+    function compassSuccess(heading) {
+        alert('Heading: ' + heading.magneticHeading);
     };
 
-    function accelerometerError() {
-        alert('onError!');
+    function compassError(error) {
+        alert('CompassError: ' + error.code);
     };
 
 }
 
-function watchAcceleration(){
+function watchOrientation(){
 
-    var accelerometerOptions = {
+    var compassOptions = {
         frequency: 3000
     }
 
-    var watchID = navigator.accelerometer.watchAcceleration(accelerometerSuccess, accelerometerError, accelerometerOptions);
+    var watchID = navigator.compass.watchHeading(compassSuccess, compassError, compassOptions);
 
-    function accelerometerSuccess(acceleration) {
-        alert('Acceleration X: ' + acceleration.x + '\n' +
-            'Acceleration Y: ' + acceleration.y + '\n' +
-            'Acceleration Z: ' + acceleration.z + '\n' +
-            'Timestamp: '      + acceleration.timestamp + '\n');
+    function compassSuccess(heading) {
+        alert('Heading: ' + heading.magneticHeading);
 
         setTimeout(function() {
-            navigator.accelerometer.clearWatch(watchID);
+            navigator.compass.clearWatch(watchID);
         }, 10000);
 
     };
 
-    function accelerometerError() {
-        alert('onError!');
+    function compassError(error) {
+        alert('CompassError: ' + error.code);
     };
 
 }
