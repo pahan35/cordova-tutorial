@@ -35,10 +35,10 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("dialogAlert").addEventListener("click", dialogAlert);
-        document.getElementById("dialogConfirm").addEventListener("click", dialogConfirm);
-        document.getElementById("dialogPrompt").addEventListener("click", dialogPrompt);
-        document.getElementById("dialogBeep").addEventListener("click", dialogBeep);
+        document.getElementById("createFile").addEventListener("click", createFile);
+        document.getElementById("writeFile").addEventListener("click", writeFile);
+        document.getElementById("readFile").addEventListener("click", readFile);
+        document.getElementById("removeFile").addEventListener("click", removeFile);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -70,50 +70,108 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function dialogAlert() {
-    var message = "I am Alert Dialog!";
-    var title = "ALERT";
-    var buttonName = "Alert Button";
+function createFile() {
+    var type = window.TEMPORARY;
+    var size = 5*1024*1024;
 
-    navigator.notification.alert(message, alertCallback, title, buttonName);
+    window.requestFileSystem(type, size, successCallback, errorCallback)
 
-    function alertCallback() {
-        console.log("Alert is Dismissed!");
+    function successCallback(fs) {
+        fs.root.getFile('log.txt', {create: true, exclusive: true}, function(fileEntry) {
+            alert('File creation successfull!')
+        }, errorCallback);
+    }
+
+    function errorCallback(error) {
+        alert("ERROR: " + error.code)
     }
 
 }
 
-function dialogConfirm() {
-    var message = "Am I Confirm Dialog?";
-    var title = "CONFIRM";
-    var buttonLabels = "YES,NO";
+function writeFile() {
+    var type = window.TEMPORARY;
+    var size = 5*1024*1024;
 
-    navigator.notification.confirm(message, confirmCallback, title, buttonLabels);
+    window.requestFileSystem(type, size, successCallback, errorCallback)
 
-    function confirmCallback(buttonIndex) {
-        console.log("You clicked " + buttonIndex + " button!");
+    function successCallback(fs) {
+
+        fs.root.getFile('log.txt', {create: true}, function(fileEntry) {
+
+            fileEntry.createWriter(function(fileWriter) {
+                fileWriter.onwriteend = function(e) {
+                    alert('Write completed.');
+                };
+
+                fileWriter.onerror = function(e) {
+                    alert('Write failed: ' + e.toString());
+                };
+
+                var blob = new Blob(['Lorem Ipsum'], {type: 'text/plain'});
+                fileWriter.write(blob);
+            }, errorCallback);
+
+        }, errorCallback);
+
+    }
+
+    function errorCallback(error) {
+        alert("ERROR: " + error.code)
     }
 
 }
 
-function dialogPrompt() {
-    var message = "Am I Prompt Dialog?";
-    var title = "PROMPT";
-    var buttonLabels = ["YES","NO"];
-    var defaultText = "Default"
+function readFile() {
+    var type = window.TEMPORARY;
+    var size = 5*1024*1024;
 
-    navigator.notification.prompt(message, promptCallback, title, buttonLabels, defaultText);
+    window.requestFileSystem(type, size, successCallback, errorCallback)
 
-    function promptCallback(result) {
-        console.log("You clicked " + result.buttonIndex + " button! \n" +
-            "You entered " +  result.input1);
+    function successCallback(fs) {
+
+        fs.root.getFile('log.txt', {}, function(fileEntry) {
+
+            fileEntry.file(function(file) {
+                var reader = new FileReader();
+
+                reader.onloadend = function(e) {
+                    var txtArea = document.getElementById('textarea');
+                    txtArea.value = this.result;
+                };
+
+                reader.readAsText(file);
+
+            }, errorCallback);
+
+        }, errorCallback);
+    }
+
+    function errorCallback(error) {
+        alert("ERROR: " + error.code)
     }
 
 }
 
-function dialogBeep() {
-    var times = 2;
-    navigator.notification.beep(times);
+function removeFile() {
+    var type = window.TEMPORARY;
+    var size = 5*1024*1024;
+
+    window.requestFileSystem(type, size, successCallback, errorCallback)
+
+    function successCallback(fs) {
+        fs.root.getFile('log.txt', {create: false}, function(fileEntry) {
+
+            fileEntry.remove(function() {
+                alert('File removed.');
+            }, errorCallback);
+
+        }, errorCallback);
+    }
+
+    function errorCallback(error) {
+        alert("ERROR: " + error.code)
+    }
+
 }
 
 function onBatteryStatus(info) {
