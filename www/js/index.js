@@ -35,8 +35,8 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("uploadFile").addEventListener("click", uploadFile);
-        document.getElementById("downloadFile").addEventListener("click", downloadFile);
+        document.getElementById("getPosition").addEventListener("click", getPosition);
+        document.getElementById("watchPosition").addEventListener("click", watchPosition);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -68,58 +68,56 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function downloadFile() {
+function getPosition() {
 
-    var fileTransfer = new FileTransfer();
-    var uri = encodeURI("https://s14.postimg.io/i8qvaxyup/bitcoin1.jpg");
-    //var fileURL =  "///storage/emulated/0/DCIM/myFile";
-    var fileURL =  "///storage/emulated/0/DCIM/bitcoin1.jpg";
-
-    fileTransfer.download(
-        uri, fileURL, function(entry) {
-            console.log("download complete: " + entry.toURL());
-        },
-
-        function(error) {
-            console.log("download error source " + error.source);
-            console.log("download error target " + error.target);
-            console.log("download error code" + error.code);
-        },
-
-        false, {
-            headers: {
-                "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
-            }
-        }
-    );
-}
-
-function uploadFile() {
-    var fileURL = "///storage/emulated/0/DCIM/bitcoin1.jpg"
-    var uri = encodeURI("http://posttestserver.com/post.php");
-    var options = new FileUploadOptions();
-
-    options.fileKey = "file";
-    options.fileName = fileURL.substr(fileURL.lastIndexOf('/')+1);
-    options.mimeType = "text/plain";
-
-    var headers = {'headerParam':'headerValue'};
-    options.headers = headers;
-
-    var ft = new FileTransfer();
-
-    ft.upload(fileURL, uri, onSuccess, onError, options);
-
-    function onSuccess(r) {
-        console.log("Code = " + r.responseCode);
-        console.log("Response = " + r.response);
-        console.log("Sent = " + r.bytesSent);
+    var options = {
+        enableHighAccuracy: true,
+        maximumAge: 3600000
     }
 
+    var watchID = navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+
+    function onSuccess(position) {
+
+        alert('Latitude: '          + position.coords.latitude          + '\n' +
+            'Longitude: '         + position.coords.longitude         + '\n' +
+            'Altitude: '          + position.coords.altitude          + '\n' +
+            'Accuracy: '          + position.coords.accuracy          + '\n' +
+            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+            'Heading: '           + position.coords.heading           + '\n' +
+            'Speed: '             + position.coords.speed             + '\n' +
+            'Timestamp: '         + position.timestamp                + '\n');
+    };
+
     function onError(error) {
-        alert("An error has occurred: Code = " + error.code);
-        console.log("upload error source " + error.source);
-        console.log("upload error target " + error.target);
+        alert('code: '    + error.code    + '\n' + 'message: ' + error.message + '\n');
+    }
+}
+
+function watchPosition() {
+
+    var options = {
+        maximumAge: 3600000,
+        timeout: 3000,
+        enableHighAccuracy: true,
+    }
+
+    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+
+    function onSuccess(position) {
+
+        alert('Latitude: '          + position.coords.latitude          + '\n' +
+            'Longitude: '         + position.coords.longitude         + '\n' +
+            'Altitude: '          + position.coords.altitude          + '\n' +
+            'Accuracy: '          + position.coords.accuracy          + '\n' +
+            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+            'Heading: '           + position.coords.heading           + '\n' +
+            'Speed: '             + position.coords.speed             + '\n' +
+            'Timestamp: '         + position.timestamp                + '\n');
+    };
+
+    function onError(error) {
+        alert('code: '    + error.code    + '\n' +'message: ' + error.message + '\n');
     }
 
 }
