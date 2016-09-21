@@ -35,16 +35,9 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         document.getElementById("findContacts").addEventListener("click", findContacts);
-        document.getElementById("prepareDatabase").addEventListener("click", function () {
-            prepareDatabase(function(db) {
-                // got database
-                var span = document.getElementById('doc-count');
-                showDocCount(db, span);
-            }, function (e) {
-                // error getting database
-                alert(e.message);
-            });
-        });
+        createTable();
+        document.getElementById("insertContacts").addEventListener("click", insertRecords);
+        document.getElementById("getContacts").addEventListener("click", getRecords);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -60,6 +53,36 @@ var app = {
 };
 
 app.initialize();
+
+db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+
+function createTable() {
+    db.transaction(function (tx) {
+        tx.executeSql('CREATE TABLE IF NOT EXISTS contacts (id unique, record)');
+    });
+}
+
+function insertRecords() {
+    db.transaction(function (tx) {
+        tx.executeSql('INSERT INTO contacts (id, record) VALUES (1, "foobar")');
+        tx.executeSql('INSERT INTO contacts (id, record) VALUES (2, "logmsg")');
+    });
+}
+
+function getRecords() {
+    db.transaction(function (tx) {
+        tx.executeSql('SELECT * FROM contacts', [], function (tx, results) {
+            var len = results.rows.length, i;
+            msg = "<p>Found rows: " + len + "</p>";
+            document.querySelector('#status').innerHTML +=  msg;
+
+            for (i = 0; i < len; i++){
+                alert(results.rows.item(i).record );
+            }
+
+        }, null);
+    });
+}
 
 function findContacts() {
     var options = new ContactFindOptions();
@@ -80,25 +103,4 @@ function findContacts() {
         alert('Failed because: ' + message);
     }
 
-}
-
-function prepareDatabase(ready, error) {
-    openDatabase('documents', '1.0', 'Offline document storage', 5*1024*1024, function (db) {
-        db.changeVersion('', '1.0', function (t) {
-            t.executeSql('CREATE TABLE docids (id, name)');
-        }, error);
-        ready(db);
-    });
-
-}
-
-function showDocCount(db, span) {
-    db.readTransaction(function (t) {
-        t.executeSql('SELECT COUNT(*) AS c FROM docids', [], function (t, r) {
-            span.textContent = r.rows[0].c;
-        }, function (t, e) {
-            // couldn't read database
-            span.textContent = '(unknown: ' + e.message + ')';
-        });
-    });
 }
