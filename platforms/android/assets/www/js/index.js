@@ -36,7 +36,6 @@ var app = {
         app.receivedEvent('deviceready');
         document.getElementById("findContacts").addEventListener("click", findContacts);
         createTable();
-        document.getElementById("insertContacts").addEventListener("click", insertRecords);
         document.getElementById("getContacts").addEventListener("click", getRecords);
     },
     // Update DOM on a Received Event
@@ -62,10 +61,9 @@ function createTable() {
     });
 }
 
-function insertRecords() {
+function insertContact(contact) {
     db.transaction(function (tx) {
-        tx.executeSql('INSERT INTO contacts (id, record) VALUES (1, "foobar")');
-        tx.executeSql('INSERT INTO contacts (id, record) VALUES (2, "logmsg")');
+        tx.executeSql('INSERT INTO contacts (record) VALUES (?)',[JSON.stringify(contact)]);
     });
 }
 
@@ -77,7 +75,7 @@ function getRecords() {
             document.querySelector('#status').innerHTML +=  msg;
 
             for (i = 0; i < len; i++){
-                alert(results.rows.item(i).record );
+                alert(JSON.parse(results.rows.item(i).record).displayName );
             }
 
         }, null);
@@ -95,7 +93,7 @@ function findContacts() {
     function contactfindSuccess(contacts) {
         for (var i = 0; i < contacts.length; i++) {
             alert("Display Name = " + contacts[i].displayName);
-            // TODO: Write contacts into local storage
+            insertContact(contacts[i]);
         }
     }
 
