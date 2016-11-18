@@ -492,6 +492,23 @@ module.exports = [
         "file": "plugins/cordova-plugin-media-capture/www/android/init.js",
         "pluginId": "cordova-plugin-media-capture",
         "runs": true
+    },
+    {
+        "id": "cordova-plugin-network-information.network",
+        "file": "plugins/cordova-plugin-network-information/www/network.js",
+        "pluginId": "cordova-plugin-network-information",
+        "clobbers": [
+            "navigator.connection",
+            "navigator.network.connection"
+        ]
+    },
+    {
+        "id": "cordova-plugin-network-information.Connection",
+        "file": "plugins/cordova-plugin-network-information/www/Connection.js",
+        "pluginId": "cordova-plugin-network-information",
+        "clobbers": [
+            "Connection"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -512,7 +529,8 @@ module.exports.metadata =
     "cordova-plugin-globalization": "1.0.4",
     "cordova-plugin-inappbrowser": "1.5.0",
     "cordova-plugin-media": "2.4.0",
-    "cordova-plugin-media-capture": "1.4.0"
+    "cordova-plugin-media-capture": "1.4.0",
+    "cordova-plugin-network-information": "1.3.0"
 };
 // BOTTOM OF METADATA
 });

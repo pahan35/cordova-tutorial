@@ -35,9 +35,9 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("audioCapture").addEventListener("click", audioCapture);
-        document.getElementById("imageCapture").addEventListener("click", imageCapture);
-        document.getElementById("videoCapture").addEventListener("click", videoCapture);
+        document.getElementById("networkInfo").addEventListener("click", networkInfo);
+        document.addEventListener("offline", onOffline, false);
+        document.addEventListener("online", onOnline, false);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -69,75 +69,28 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function audioCapture() {
+function networkInfo() {
+    var networkState = navigator.connection.type;
+    var states = {};
 
-    var options = {
-        limit: 1,
-        duration: 10
-    };
+    states[Connection.UNKNOWN]  = 'Unknown connection';
+    states[Connection.ETHERNET] = 'Ethernet connection';
+    states[Connection.WIFI]     = 'WiFi connection';
+    states[Connection.CELL_2G]  = 'Cell 2G connection';
+    states[Connection.CELL_3G]  = 'Cell 3G connection';
+    states[Connection.CELL_4G]  = 'Cell 4G connection';
+    states[Connection.CELL]     = 'Cell generic connection';
+    states[Connection.NONE]     = 'No network connection';
 
-    navigator.device.capture.captureAudio(onSuccess, onError, options);
-
-    function onSuccess(mediaFiles) {
-        var i, path, len;
-
-        for (i = 0, len = mediaFiles.length; i < len; i += 1) {
-            path = mediaFiles[i].fullPath;
-            console.log(mediaFiles);
-        }
-    }
-
-    function onError(error) {
-        navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
-    }
-
+    alert('Connection type: ' + states[networkState]);
 }
 
-function imageCapture() {
-
-    var options = {
-        limit: 1
-    };
-
-    navigator.device.capture.captureImage(onSuccess, onError, options);
-
-    function onSuccess(mediaFiles) {
-        var i, path, len;
-
-        for (i = 0, len = mediaFiles.length; i < len; i += 1) {
-            path = mediaFiles[i].fullPath;
-            console.log(mediaFiles);
-        }
-    }
-
-    function onError(error) {
-        navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
-    }
-
+function onOffline() {
+    alert('You are now offline!');
 }
 
-function videoCapture() {
-
-    var options = {
-        limit: 1,
-        duration: 10
-    };
-
-    navigator.device.capture.captureVideo(onSuccess, onError, options);
-
-    function onSuccess(mediaFiles) {
-        var i, path, len;
-
-        for (i = 0, len = mediaFiles.length; i < len; i += 1) {
-            path = mediaFiles[i].fullPath;
-            console.log(mediaFiles);
-        }
-    }
-
-    function onError(error) {
-        navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
-    }
-
+function onOnline() {
+    alert('You are now online!');
 }
 
 function onBatteryStatus(info) {
