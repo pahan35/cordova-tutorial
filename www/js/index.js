@@ -34,20 +34,42 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+        document.getElementById("heartBeat").addEventListener("click", heartBeat);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         var parentElement = document.getElementById(id);
         var listeningElement = parentElement.querySelector('.listening');
         var receivedElement = parentElement.querySelector('.received');
-        var received2Element = parentElement.querySelector('.received2');
 
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:block;');
-        received2Element.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
     }
 };
 
 app.initialize();
+
+function heartBeat() {
+    var minute = 60 * 1000;
+    var pulse = 140;
+
+    var period = minute / pulse;
+
+    var beat = 1;
+    var longPause = 8;
+    var shortPause = 2;
+
+    var periodPart = (beat * 2 + longPause + shortPause);
+
+    var beatTime = period * beat / periodPart;
+    var longPauseTime = period * longPause / periodPart;
+    var shortPauseTime = period * shortPause / periodPart;
+
+    var pattern = [beatTime, longPauseTime, beatTime, shortPauseTime];
+
+    setInterval(function () {
+        navigator.vibrate(pattern);
+    },period);
+}
