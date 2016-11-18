@@ -35,8 +35,10 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("getPosition").addEventListener("click", getPosition);
-        document.getElementById("watchPosition").addEventListener("click", watchPosition);
+        document.getElementById("getLanguage").addEventListener("click", getLanguage);
+        document.getElementById("getLocaleName").addEventListener("click", getLocaleName);
+        document.getElementById("getDate").addEventListener("click", getDate);
+        document.getElementById("getCurrency").addEventListener("click", getCurrency);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -68,56 +70,67 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function getPosition() {
+function getLanguage() {
+    navigator.globalization.getPreferredLanguage(onSuccess, onError);
 
-    var options = {
-        enableHighAccuracy: true,
-        maximumAge: 3600000
+    function onSuccess(language) {
+        alert('language: ' + language.value + '\n');
     }
 
-    var watchID = navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
-
-    function onSuccess(position) {
-
-        alert('Latitude: '          + position.coords.latitude          + '\n' +
-            'Longitude: '         + position.coords.longitude         + '\n' +
-            'Altitude: '          + position.coords.altitude          + '\n' +
-            'Accuracy: '          + position.coords.accuracy          + '\n' +
-            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-            'Heading: '           + position.coords.heading           + '\n' +
-            'Speed: '             + position.coords.speed             + '\n' +
-            'Timestamp: '         + position.timestamp                + '\n');
-    };
-
-    function onError(error) {
-        alert('code: '    + error.code    + '\n' + 'message: ' + error.message + '\n');
+    function onError(){
+        alert('Error getting language');
     }
+
 }
 
-function watchPosition() {
+function getLocaleName() {
+    navigator.globalization.getLocaleName(onSuccess, onError);
 
-    var options = {
-        maximumAge: 3600000,
-        timeout: 3000,
-        enableHighAccuracy: true,
+    function onSuccess(locale) {
+        alert('locale: ' + locale.value);
     }
 
-    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+    function onError(){
+        alert('Error getting locale');
+    }
 
-    function onSuccess(position) {
+}
 
-        alert('Latitude: '          + position.coords.latitude          + '\n' +
-            'Longitude: '         + position.coords.longitude         + '\n' +
-            'Altitude: '          + position.coords.altitude          + '\n' +
-            'Accuracy: '          + position.coords.accuracy          + '\n' +
-            'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-            'Heading: '           + position.coords.heading           + '\n' +
-            'Speed: '             + position.coords.speed             + '\n' +
-            'Timestamp: '         + position.timestamp                + '\n');
-    };
+function getDate() {
+    var date = new Date();
 
-    function onError(error) {
-        alert('code: '    + error.code    + '\n' +'message: ' + error.message + '\n');
+    var options = {
+        formatLength:'short',
+        selector:'date and time'
+    }
+
+    navigator.globalization.dateToString(date, onSuccess, onError, options);
+
+    function onSuccess(date) {
+        alert('date: ' + date.value);
+    }
+
+    function onError(){
+        alert('Error getting dateString');
+    }
+
+}
+
+function getCurrency() {
+    var currencyCode = 'EUR';
+    navigator.globalization.getCurrencyPattern(currencyCode, onSuccess, onError);
+
+    function onSuccess(pattern) {
+        alert('pattern: '  + pattern.pattern  + '\n' +
+            'code: '     + pattern.code     + '\n' +
+            'fraction: ' + pattern.fraction + '\n' +
+            'rounding: ' + pattern.rounding + '\n' +
+            'decimal: '  + pattern.decimal  + '\n' +
+            'grouping: ' + pattern.grouping);
+    }
+
+    function onError(){
+        alert('Error getting pattern');
     }
 
 }
