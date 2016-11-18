@@ -35,11 +35,9 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("playAudio").addEventListener("click", playAudio);
-        document.getElementById("pauseAudio").addEventListener("click", pauseAudio);
-        document.getElementById("stopAudio").addEventListener("click", stopAudio);
-        document.getElementById("volumeUp").addEventListener("click", volumeUp);
-        document.getElementById("volumeDown").addEventListener("click", volumeDown);
+        document.getElementById("audioCapture").addEventListener("click", audioCapture);
+        document.getElementById("imageCapture").addEventListener("click", imageCapture);
+        document.getElementById("videoCapture").addEventListener("click", videoCapture);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -71,53 +69,75 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-var myMedia = null;
+function audioCapture() {
 
-function playAudio() {
-    var src = "/android_asset/www/audio/piano.mp3";
+    var options = {
+        limit: 1,
+        duration: 10
+    };
 
-    if(myMedia === null) {
-        myMedia = new Media(src, onSuccess, onError);
+    navigator.device.capture.captureAudio(onSuccess, onError, options);
 
-        function onSuccess() {
-            console.log("playAudio Success");
+    function onSuccess(mediaFiles) {
+        var i, path, len;
+
+        for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+            path = mediaFiles[i].fullPath;
+            console.log(mediaFiles);
         }
+    }
 
-        function onError(error) {
-            console.log("playAudio Error: " + error.code);
+    function onError(error) {
+        navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
+    }
+
+}
+
+function imageCapture() {
+
+    var options = {
+        limit: 1
+    };
+
+    navigator.device.capture.captureImage(onSuccess, onError, options);
+
+    function onSuccess(mediaFiles) {
+        var i, path, len;
+
+        for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+            path = mediaFiles[i].fullPath;
+            console.log(mediaFiles);
         }
-
     }
 
-    myMedia.play();
+    function onError(error) {
+        navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
+    }
+
 }
 
-function pauseAudio() {
-    if(myMedia) {
-        myMedia.pause();
+function videoCapture() {
+
+    var options = {
+        limit: 1,
+        duration: 10
+    };
+
+    navigator.device.capture.captureVideo(onSuccess, onError, options);
+
+    function onSuccess(mediaFiles) {
+        var i, path, len;
+
+        for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+            path = mediaFiles[i].fullPath;
+            console.log(mediaFiles);
+        }
     }
-}
 
-function stopAudio() {
-    if(myMedia) {
-        myMedia.stop();
+    function onError(error) {
+        navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
     }
 
-    myMedia = null;
-}
-
-var volumeValue = 0.5;
-
-function volumeUp() {
-    if(myMedia && volumeValue < 1) {
-        myMedia.setVolume(volumeValue += 0.1);
-    }
-}
-
-function volumeDown() {
-    if(myMedia && volumeValue > 0) {
-        myMedia.setVolume(volumeValue -= 0.1);
-    }
 }
 
 function onBatteryStatus(info) {
