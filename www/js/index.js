@@ -35,7 +35,11 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("openBrowser").addEventListener("click", openBrowser);
+        document.getElementById("playAudio").addEventListener("click", playAudio);
+        document.getElementById("pauseAudio").addEventListener("click", pauseAudio);
+        document.getElementById("stopAudio").addEventListener("click", stopAudio);
+        document.getElementById("volumeUp").addEventListener("click", volumeUp);
+        document.getElementById("volumeDown").addEventListener("click", volumeDown);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -67,31 +71,52 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function openBrowser() {
-    var url = 'https://cordova.apache.org';
-    var target = '_blank';
-    var options = "location=yes"
-    var ref = cordova.InAppBrowser.open(url, target, options);
+var myMedia = null;
 
-    ref.addEventListener('loadstart', loadstartCallback);
-    ref.addEventListener('loadstop', loadstopCallback);
-    ref.addEventListener('loadloaderror', loaderrorCallback);
-    ref.addEventListener('exit', exitCallback);
+function playAudio() {
+    var src = "/android_asset/www/audio/piano.mp3";
 
-    function loadstartCallback(event) {
-        console.log('Loading started: '  + event.url)
+    if(myMedia === null) {
+        myMedia = new Media(src, onSuccess, onError);
+
+        function onSuccess() {
+            console.log("playAudio Success");
+        }
+
+        function onError(error) {
+            console.log("playAudio Error: " + error.code);
+        }
+
     }
 
-    function loadstopCallback(event) {
-        console.log('Loading finished: ' + event.url)
+    myMedia.play();
+}
+
+function pauseAudio() {
+    if(myMedia) {
+        myMedia.pause();
+    }
+}
+
+function stopAudio() {
+    if(myMedia) {
+        myMedia.stop();
     }
 
-    function loaderrorCallback(error) {
-        console.log('Loading error: ' + error.message)
-    }
+    myMedia = null;
+}
 
-    function exitCallback() {
-        console.log('Browser is closed...')
+var volumeValue = 0.5;
+
+function volumeUp() {
+    if(myMedia && volumeValue < 1) {
+        myMedia.setVolume(volumeValue += 0.1);
+    }
+}
+
+function volumeDown() {
+    if(myMedia && volumeValue > 0) {
+        myMedia.setVolume(volumeValue -= 0.1);
     }
 }
 
