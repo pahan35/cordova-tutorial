@@ -35,7 +35,8 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("networkInfo").addEventListener("click", networkInfo);
+        document.getElementById("vibration").addEventListener("click", vibration);
+        document.getElementById("vibrationPattern").addEventListener("click", vibrationPattern);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -58,6 +59,16 @@ document.addEventListener("volumeupbutton", callbackFunction, false);
 
 function callbackFunction() {
     alert('Volume Up Button is pressed!')
+}
+
+function vibration() {
+    var time = 3000;
+    navigator.vibrate(time);
+}
+
+function vibrationPattern() {
+    var pattern = [1000, 1000, 1000, 1000];
+    navigator.vibrate(pattern);
 }
 
 function onBatteryStatus(info) {

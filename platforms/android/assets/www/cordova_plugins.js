@@ -517,6 +517,15 @@ module.exports = [
         "clobbers": [
             "navigator.splashscreen"
         ]
+    },
+    {
+        "id": "cordova-plugin-vibration.notification",
+        "file": "plugins/cordova-plugin-vibration/www/vibration.js",
+        "pluginId": "cordova-plugin-vibration",
+        "merges": [
+            "navigator.notification",
+            "navigator"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -539,7 +548,8 @@ module.exports.metadata =
     "cordova-plugin-media": "2.4.0",
     "cordova-plugin-media-capture": "1.4.0",
     "cordova-plugin-network-information": "1.3.0",
-    "cordova-plugin-splashscreen": "4.0.0"
+    "cordova-plugin-splashscreen": "4.0.0",
+    "cordova-plugin-vibration": "2.1.2"
 };
 // BOTTOM OF METADATA
 });
