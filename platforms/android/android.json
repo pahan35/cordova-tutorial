@@ -59,6 +59,10 @@
                         {
                             "xml": "<feature name=\"Globalization\"><param name=\"android-package\" value=\"org.apache.cordova.globalization.Globalization\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"InAppBrowser\"><param name=\"android-package\" value=\"org.apache.cordova.inappbrowser.InAppBrowser\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -133,6 +137,9 @@
             "PACKAGE_NAME": "com.example.hello"
         },
         "cordova-plugin-globalization": {
+            "PACKAGE_NAME": "com.example.hello"
+        },
+        "cordova-plugin-inappbrowser": {
             "PACKAGE_NAME": "com.example.hello"
         }
     },
@@ -537,6 +544,15 @@
             "clobbers": [
                 "navigator.globalization"
             ]
+        },
+        {
+            "id": "cordova-plugin-inappbrowser.inappbrowser",
+            "file": "plugins/cordova-plugin-inappbrowser/www/inappbrowser.js",
+            "pluginId": "cordova-plugin-inappbrowser",
+            "clobbers": [
+                "cordova.InAppBrowser.open",
+                "window.open"
+            ]
         }
     ],
     "plugin_metadata": {
@@ -552,6 +568,7 @@
         "cordova-plugin-file": "4.3.0",
         "cordova-plugin-file-transfer": "1.6.0",
         "cordova-plugin-geolocation": "2.3.0",
-        "cordova-plugin-globalization": "1.0.4"
+        "cordova-plugin-globalization": "1.0.4",
+        "cordova-plugin-inappbrowser": "1.5.0"
     }
 }

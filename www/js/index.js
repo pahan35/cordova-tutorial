@@ -35,10 +35,7 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.addEventListener("batterystatus", onBatteryStatus, false);
-        document.getElementById("getLanguage").addEventListener("click", getLanguage);
-        document.getElementById("getLocaleName").addEventListener("click", getLocaleName);
-        document.getElementById("getDate").addEventListener("click", getDate);
-        document.getElementById("getCurrency").addEventListener("click", getCurrency);
+        document.getElementById("openBrowser").addEventListener("click", openBrowser);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -70,69 +67,32 @@ function onBackKeyDown(e) {
     alert('Back Button is Pressed!');
 }
 
-function getLanguage() {
-    navigator.globalization.getPreferredLanguage(onSuccess, onError);
+function openBrowser() {
+    var url = 'https://cordova.apache.org';
+    var target = '_blank';
+    var options = "location=yes"
+    var ref = cordova.InAppBrowser.open(url, target, options);
 
-    function onSuccess(language) {
-        alert('language: ' + language.value + '\n');
+    ref.addEventListener('loadstart', loadstartCallback);
+    ref.addEventListener('loadstop', loadstopCallback);
+    ref.addEventListener('loadloaderror', loaderrorCallback);
+    ref.addEventListener('exit', exitCallback);
+
+    function loadstartCallback(event) {
+        console.log('Loading started: '  + event.url)
     }
 
-    function onError(){
-        alert('Error getting language');
+    function loadstopCallback(event) {
+        console.log('Loading finished: ' + event.url)
     }
 
-}
-
-function getLocaleName() {
-    navigator.globalization.getLocaleName(onSuccess, onError);
-
-    function onSuccess(locale) {
-        alert('locale: ' + locale.value);
+    function loaderrorCallback(error) {
+        console.log('Loading error: ' + error.message)
     }
 
-    function onError(){
-        alert('Error getting locale');
+    function exitCallback() {
+        console.log('Browser is closed...')
     }
-
-}
-
-function getDate() {
-    var date = new Date();
-
-    var options = {
-        formatLength:'short',
-        selector:'date and time'
-    }
-
-    navigator.globalization.dateToString(date, onSuccess, onError, options);
-
-    function onSuccess(date) {
-        alert('date: ' + date.value);
-    }
-
-    function onError(){
-        alert('Error getting dateString');
-    }
-
-}
-
-function getCurrency() {
-    var currencyCode = 'EUR';
-    navigator.globalization.getCurrencyPattern(currencyCode, onSuccess, onError);
-
-    function onSuccess(pattern) {
-        alert('pattern: '  + pattern.pattern  + '\n' +
-            'code: '     + pattern.code     + '\n' +
-            'fraction: ' + pattern.fraction + '\n' +
-            'rounding: ' + pattern.rounding + '\n' +
-            'decimal: '  + pattern.decimal  + '\n' +
-            'grouping: ' + pattern.grouping);
-    }
-
-    function onError(){
-        alert('Error getting pattern');
-    }
-
 }
 
 function onBatteryStatus(info) {
